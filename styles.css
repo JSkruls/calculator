@@ -1,0 +1,154 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(185,181,187);
+  background: linear-gradient(155deg,
+    rgba(185,181,187,1) 0%, 
+    rgba(253,252,252,1) 50%, 
+    rgba(185,181,187,1) 100%);
+}
+#frame {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 350px;
+  background: white;
+  box-shadow: 0px 0px 18px -5px rgba(0,0,0,0.75);
+}
+.border-top, .border-bottom {
+  height: 10px;
+  width: 100%;
+  background: rgb(67,74,92);
+  background: linear-gradient(180deg, 
+    rgba(67,74,92,1) 0%, 
+    rgba(45,50,64,1) 70%);
+  box-shadow: 0px 2px 8px -3px rgba(0,0,0,0.75);
+  position: relative;
+}
+.border-bottom {
+  height: 6px;
+  box-shadow: 0px -1px 8px -1px rgba(0,0,0,0.55);
+}
+.screen {
+  height: 150px;
+  width: 100%;
+  background: rgb(106,99,242);
+  background: linear-gradient(90deg, 
+    rgba(106,99,242,1) 0%, 
+    rgba(146,136,245,1) 85%);
+  padding: 60px 20px 0 0;
+}
+.result, .equation {
+  font-family: 'Nunito';
+  font-weight: lighter;
+  color: white;
+  text-align: right;
+}
+.result {
+  margin-top: 5px;
+  font-size: 3rem;
+}
+.equation {
+  font-size: 1.2rem;
+}
+#keyboard,
+#upper-row,   
+#right-column {
+  display: flex;
+  flex-wrap: wrap;
+}
+#numpad div {
+  color: #ffffff;
+}
+#numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 86.85px);
+  grid-template-rows: repeat(4, 86.85px);
+  grid-row-gap: 0.5px;
+  grid-column-gap: 0.5px;
+}
+#right-column {
+  row-gap: 0.5px;
+}
+#right-column .button {
+  background: white;
+}
+#right-column .equals {
+  background: rgb(108,195,100);
+  background: linear-gradient(45deg, 
+    rgba(108,195,100,1) 0%,
+    rgba(127,212,118,1) 50%);
+  color: white; 
+}
+#container {
+  display: flex;
+  column-gap: 0.5px;
+  position: relative;
+}
+#upper-row {
+  column-gap: 0.5px;
+}
+.button {
+  height: 86.85px;
+  width: 86.85px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#keyboard {
+  background: #b9b9bd;
+  row-gap: 0.5px;
+  column-gap: 0.5px;
+  border-left: 0.5px solid #b9b9bd;
+  border-bottom: 0.5px solid #b9b9bd;
+  border-right: 0.5px solid #b9b9bd;
+  font-family: 'Roboto mono';
+}
+.all-clear, .clear-entry {
+  background: rgb(175,186,184);
+  background: linear-gradient(45deg,
+    rgba(175,186,184,1) 0%,
+    rgba(192,202,201,1) 50%);
+}
+.percentage, .division {
+  background: white;
+}
+.gradient-start {
+  background: rgb(45,50,63);
+  background: linear-gradient(90deg, 
+    rgba(45,50,63,1) 0%, 
+    rgba(52,58,72,1) 50%);
+  z-index: 1;
+}
+.gradient-mid {
+  background: rgb(53,58,73);
+  background: linear-gradient(90deg, 
+    rgba(53,58,73,1) 0%, 
+    rgba(60,66,82,1) 50%);
+  z-index: 1;
+}
+.gradient-end {
+  background: rgb(60,66,82);
+  background: linear-gradient(90deg, 
+    rgba(60,66,82,1) 0%, 
+    rgba(67,74,91,1) 50%);
+  z-index: 1;
+}
+.cover {
+  height: 100%;
+  width: 75%;
+  background: rgb(58,64,80);
+  background: linear-gradient(45deg, 
+    rgba(58,64,80,1) 0%, 
+    rgba(78,85,104,1) 50%);
+  position: absolute;
+}
