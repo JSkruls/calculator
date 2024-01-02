@@ -1,0 +1,1 @@
+const buttons = Array.from(document.querySelectorAll('.button'));
