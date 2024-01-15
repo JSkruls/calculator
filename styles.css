@@ -17,6 +17,8 @@ body {
     rgba(185,181,187,1) 100%);
   font-size: 1.1rem;
 }
+
+
 #frame {
   display: flex;
   flex-direction: column;
@@ -24,7 +26,8 @@ body {
   width: 350px;
   box-shadow: 0px 0px 18px -5px rgba(0,0,0,0.75);
 }
-.border-top, .border-bottom {
+.border-top, 
+.border-bottom {
   height: 10px;
   width: 100%;
   background: rgb(67,74,92);
@@ -32,7 +35,6 @@ body {
     rgba(67,74,92,1) 0%, 
     rgba(45,50,64,1) 70%);
   box-shadow: 0px 2px 8px -3px rgba(0,0,0,0.75);
-  position: relative;
 }
 .border-bottom {
   height: 6px;
@@ -47,7 +49,8 @@ body {
     rgba(146,136,245,1) 85%);
   padding: 60px 20px 0 0;
 }
-.result, .equation {
+.result, 
+.equation {
   font-family: 'Nunito';
   font-weight: lighter;
   color: white;
@@ -60,49 +63,13 @@ body {
 .equation {
   font-size: 1.2rem;
 }
+
+
 #keyboard,
 #upper-row,   
 #right-column {
   display: flex;
   flex-wrap: wrap;
-}
-#numpad div {
-  color: #ffffff;
-}
-#numpad {
-  display: grid;
-  grid-template-columns: repeat(3, 86.85px);
-  grid-template-rows: repeat(4, 86.85px);
-  grid-row-gap: 0.5px;
-  grid-column-gap: 0.5px;
-}
-#right-column {
-  row-gap: 0.5px;
-}
-#right-column .button {
-  background: rgba(239, 239, 239, 1);
-}
-#right-column .equals {
-  background: rgb(108,195,100);
-  background: linear-gradient(45deg, 
-    rgba(108,195,100,1) 0%,
-    rgba(127,212,118,1) 50%);
-  color: white; 
-}
-#container {
-  display: flex;
-  column-gap: 0.5px;
-  position: relative;
-}
-#upper-row {
-  column-gap: 0.5px;
-}
-.button {
-  height: 86.85px;
-  width: 86.85px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 #keyboard {
   background: #b9b9bd;
@@ -113,14 +80,36 @@ body {
   border-right: 0.5px solid #b9b9bd;
   font-family: 'Roboto mono';
 }
-.all-clear, .clear-entry {
+#upper-row {
+  column-gap: 0.5px;
+}
+.all-clear, 
+.clear-entry {
   background: rgb(175,186,184);
   background: linear-gradient(0deg,
     rgba(175,186,184,1) 0%,
     rgba(192,202,201,1) 50%);
 }
-.percentage, .division {
+.percentage, 
+.division {
   background: rgba(239, 239, 239, 1);
+}
+
+
+#container {
+  display: flex;
+  column-gap: 0.5px;
+  position: relative;
+}
+#numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 86.85px);
+  grid-template-rows: repeat(4, 86.85px);
+  grid-row-gap: 0.5px;
+  grid-column-gap: 0.5px;
+}
+#numpad div {
+  color: rgb(255, 255, 255);
 }
 .gradient-start {
   background: rgb(45,50,63);
@@ -152,10 +141,23 @@ body {
     rgba(78,85,104,1) 50%);
   position: absolute;
 }
-.button:hover {
-  box-shadow: 1px 1px 8px -5px rgba(0,0,0,0.95);
-  z-index: 2;
+
+
+#right-column {
+  row-gap: 0.5px;
 }
+#right-column .button {
+  background: rgba(239, 239, 239, 1);
+}
+#right-column .equals {
+  background: rgb(108,195,100);
+  background: linear-gradient(45deg, 
+    rgba(108,195,100,1) 0%,
+    rgba(127,212,118,1) 50%);
+  color: rgb(255, 255, 255); 
+}
+
+
 #keyboard span:active {
   box-shadow: inset 0px 0px 8px -3px rgba(0,0,0, 0.9);
   background: none;
@@ -172,4 +174,15 @@ span:hover {
   background: linear-gradient(135deg,
    rgba(213, 213, 214, 0.20) 0%, 
    rgba(255, 255, 255, 0.005) 55%);
+}
+.button:hover {
+  box-shadow: 1px 1px 8px -5px rgba(0,0,0,0.95);
+  z-index: 2;
+}
+.button {
+  height: 86.85px;
+  width: 86.85px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
