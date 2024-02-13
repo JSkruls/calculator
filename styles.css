@@ -47,7 +47,8 @@ body {
   background: linear-gradient(90deg, 
     rgba(106,99,242,1) 0%, 
     rgba(146,136,245,1) 85%);
-  padding: 60px 20px 0 0;
+  padding: 0 20px 0 0;
+  position: relative;
 }
 .result, 
 .equation {
@@ -57,11 +58,16 @@ body {
   text-align: right;
 }
 .result {
-  margin-top: 5px;
   font-size: 3rem;
+  position: absolute;
+  top: 80px;
+  right: 20px;
 }
 .equation {
   font-size: 1.2rem;
+  position: absolute;
+  top: 50px;
+  right: 20px;
 }
 
 
