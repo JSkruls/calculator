@@ -9,6 +9,9 @@ const decimal = document.querySelector('.dot');
 const plus = document.querySelector('.plus');
 
 let counter = 0;
+let firstNumber;
+let secondNumber;
+let buttonOperator;
 
 
 numbers.forEach((button) => {
@@ -18,12 +21,14 @@ numbers.forEach((button) => {
     if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation is empty...
       screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Removes first zero of a non-zero number
       screenElement.textContent = screenValue; // Updates a screen with a new number value
+      firstNumber = screenValue;
     }
     else { // If equation contains operator...
       counter++;
       if(counter === 1) { screenValue = '0'; } // Reset screen value, but only once, so that concatenation works
       screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Removes first zero of a non-zero number
       screenElement.textContent = screenValue; // Updates a screen with a new number value
+      secondNumber = screenValue;
     }
   });
 });
@@ -36,28 +41,40 @@ decimal.addEventListener('click', function(event) { // Adds event handler to "do
 
 operators.forEach((button) => { // Adds event handler to all operator buttons
   return button.addEventListener('click', function(event) {
-      
-    let buttonOperator = this.children[0].textContent; // Takes a value of clicked operator button
-
+    if(!secondNumber) { // Allow changing operators until second number is entered  
+    buttonOperator = this.children[0].textContent; // Takes a value of clicked operator button until second number is entered
+    }
     if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation doesn't have operator/empty -> update number + operator
       screenEquationElement.textContent = screenValue + ' ' + buttonOperator + ' '; // This stops from updating to zero on same operator click
     }
-    else { // Must be changed to else if() checking presence of operator in equation and that 2nd num variable is '' / undefined
+    else if(!secondNumber) { // Must be changed to else if() checking presence of operator in equation and that 2nd num variable is '' / undefined
       let temp = screenEquationElement.textContent.split(''); // Turned to array to apply splice() and replace current operator with new
       temp.splice(-2,1,buttonOperator);
       screenEquationElement.textContent = temp.join('');
     }
+    else {
+      screenEquationElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
+    } 
   });
 });
-// CALCULATE THE EQUATION
-// 1)Operator can ba changed only before the 2nd number is entered. Any 2nd number stops operator from changing and makes it calculate.
-//   *First variable captures value of 1st number when clicking operator button
-//   *Second variable remains empty ''/undefined
-//   *If equation has operator and 2nd variable is empty - operator click changes operator
-//   *Once 2nd variable is populated - operator click makes calculation instead of changing equation operator
+
+function operate(num1,num2,operator) {
+  switch (operator) {
+    case '+':
+      return add(num1,num2);
+    case '-':
+      return subtract(num1,num2);
+    case '×':
+      return multiply(num1,num2);
+    case '÷':
+      return divide(num1,num2);
+    case '%':
+      return percentage(num1,num2);
+  }
+}
 
 function add(num1,num2) {
-  return num1 + num2;
+  return Number(num1) + Number(num2);
 }
 
 function subtract(num1,num2) {
@@ -70,6 +87,10 @@ function multiply(num1,num2) {
 
 function divide(num1,num2) {
   return num1 / num2;
+}
+
+function percentage(num1,num2) {
+  return num1 / 100 * num2;
 }
 
 function findOperator(operator) {
