@@ -1,18 +1,19 @@
 let screenValue = document.querySelector('.result').textContent; // Holds initial display value - 0
 let screenElement = document.querySelector('.result'); // Html element for initial display value
-let screenEquationValue = document.querySelector('.equation').textContent; // Holds initial display equation 
+let screenEquationValue = document.querySelector('.equation').textContent; // Holds initial display equation - isn't used, delete?
 let screenEquationElement = document.querySelector('.equation'); // Html element for display equation 
 
 const numbers = Array.from(document.querySelectorAll('.number'));
 const operators = Array.from(document.querySelectorAll('.operator'));
 const decimal = document.querySelector('.dot');
 const plus = document.querySelector('.plus');
+const equal = document.querySelector('.equals');
 
 let counter = 0;
 let firstNumber;
 let secondNumber;
 let buttonOperator;
-
+let buttonOperatorEnd;
 
 numbers.forEach((button) => {
   return button.addEventListener('click',function(event) { // Adds event handler to all numeric buttons
@@ -41,6 +42,7 @@ decimal.addEventListener('click', function(event) { // Adds event handler to "do
 
 operators.forEach((button) => { // Adds event handler to all operator buttons
   return button.addEventListener('click', function(event) {
+    buttonOperatorEnd = this.children[0].textContent;
     if(!secondNumber) { // Allow changing operators until second number is entered  
     buttonOperator = this.children[0].textContent; // Takes a value of clicked operator button until second number is entered
     }
@@ -53,10 +55,23 @@ operators.forEach((button) => { // Adds event handler to all operator buttons
       screenEquationElement.textContent = temp.join('');
     }
     else {
-      screenEquationElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
+      screenEquationElement.textContent = `${operate(firstNumber,secondNumber,buttonOperator)} ${buttonOperatorEnd}`;
+      screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
     } 
   });
 });
+
+equal.addEventListener('click', function(event) {
+  screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
+  screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`;
+});
+
+
+
+// UPDATE RESULT WITH CALCULATION RESULT
+// 1)Update result value with the value of equation
+// 2)If equation is calculated via '=', display all equation (e.g. "55 * 6 =") / fifty five times six
+// 3)If equation is calculated via operator, display result of calculation and following operator (e.g. "330 + ") fifty five times six
 
 function operate(num1,num2,operator) {
   switch (operator) {
