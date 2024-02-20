@@ -57,6 +57,11 @@ operators.forEach((button) => { // Adds event handler to all operator buttons
     else {
       screenEquationElement.textContent = `${operate(firstNumber,secondNumber,buttonOperator)} ${buttonOperatorEnd}`;
       screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
+      screenValue = ''; // Prevent 3rd number concatenation to the 2nd
+      firstNumber = screenElement.textContent; // Updates first number to equation result
+      if(firstNumber === screenElement.textContent) { // change operator for subsequent number calculations
+        buttonOperator = screenEquationElement.textContent.split('').splice(-1,1).join('');
+      }
     } 
   });
 });
@@ -66,12 +71,12 @@ equal.addEventListener('click', function(event) {
   screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`;
 });
 
-
-
-// UPDATE RESULT WITH CALCULATION RESULT
-// 1)Update result value with the value of equation
-// 2)If equation is calculated via '=', display all equation (e.g. "55 * 6 =") / fifty five times six
-// 3)If equation is calculated via operator, display result of calculation and following operator (e.g. "330 + ") fifty five times six
+// CONTINUING CALCULATION
+// 1)Bug: Second numbers of first calculation concatenates with number for next calculation (e.g. 5 + 6 - 3 -> 63)
+//   Second number isn't reset after calculation, so it is being concatenated to
+// 2)Bug: Concatenated number is calculated with first number of initial equation (e.g. 6 + 5 - 2 -> 6 + 53)
+//   Following calculation still used operator of first calculation - should change
+//   When 1st number takes value of equation's calculation, change button operator value to equations last char
 
 function operate(num1,num2,operator) {
   switch (operator) {
