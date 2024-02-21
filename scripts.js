@@ -51,7 +51,7 @@ operators.forEach((button) => { // Adds event handler to all operator buttons
     }
     else if(!secondNumber) { // Must be changed to else if() checking presence of operator in equation and that 2nd num variable is '' / undefined
       let temp = screenEquationElement.textContent.split(''); // Turned to array to apply splice() and replace current operator with new
-      temp.splice(-2,1,buttonOperator);
+      temp.splice(-2,2,' ',buttonOperator);
       screenEquationElement.textContent = temp.join('');
     }
     else {
@@ -59,6 +59,7 @@ operators.forEach((button) => { // Adds event handler to all operator buttons
       screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
       screenValue = ''; // Prevent 3rd number concatenation to the 2nd
       firstNumber = screenElement.textContent; // Updates first number to equation result
+      secondNumber = undefined;
       if(firstNumber === screenElement.textContent) { // change operator for subsequent number calculations
         buttonOperator = screenEquationElement.textContent.split('').splice(-1,1).join('');
       }
@@ -67,16 +68,11 @@ operators.forEach((button) => { // Adds event handler to all operator buttons
 });
 
 equal.addEventListener('click', function(event) {
+  if(secondNumber) {
   screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
   screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`;
+  }
 });
-
-// CONTINUING CALCULATION
-// 1)Bug: Second numbers of first calculation concatenates with number for next calculation (e.g. 5 + 6 - 3 -> 63)
-//   Second number isn't reset after calculation, so it is being concatenated to
-// 2)Bug: Concatenated number is calculated with first number of initial equation (e.g. 6 + 5 - 2 -> 6 + 53)
-//   Following calculation still used operator of first calculation - should change
-//   When 1st number takes value of equation's calculation, change button operator value to equations last char
 
 function operate(num1,num2,operator) {
   switch (operator) {
@@ -114,5 +110,5 @@ function percentage(num1,num2) {
 }
 
 function findOperator(operator) {
-  return operator === '%' || operator === '÷' || operator === '×' || operator === '-' || operator === '+' || operator === '=';
+  return operator === '%' || operator === '÷' || operator === '×' || operator === '-' || operator === '+' || operator === '='; // = needed here?
 }
