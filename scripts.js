@@ -1,6 +1,5 @@
 let screenValue = document.querySelector('.result').textContent; // Holds initial display value - 0
 let screenElement = document.querySelector('.result'); // Html element for initial display value
-let screenEquationValue = document.querySelector('.equation').textContent; // Holds initial display equation - isn't used, delete?
 let screenEquationElement = document.querySelector('.equation'); // Html element for display equation 
 
 const numbers = Array.from(document.querySelectorAll('.number'));
@@ -16,65 +15,69 @@ let buttonOperator;
 let buttonOperatorEnd;
 
 numbers.forEach((button) => {
-  return button.addEventListener('click',function(event) { // Adds event handler to all numeric buttons
-    let buttonNumber = this.children[0].textContent; // Takes a value of clicked numeric button
+  return button.addEventListener('click',function(event) { // Add event handlers to all numeric buttons
+    let buttonNumber = this.children[0].textContent; // Take a value of clicked numeric button
 
-    if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation is empty...
-      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Removes first zero of a non-zero number
-      screenElement.textContent = screenValue; // Updates a screen with a new number value
-      firstNumber = screenValue;
+    if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation hasn't got operator...
+      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate first number and removes first zero of a non-zero number
+      screenElement.textContent = screenValue; // Update a screen with a new number value
+      firstNumber = screenValue; // Assign screen value to variable 
     }
     else { // If equation contains operator...
-      counter++;
-      if(counter === 1) { screenValue = '0'; } // Reset screen value, but only once, so that concatenation works
-      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Removes first zero of a non-zero number
-      screenElement.textContent = screenValue; // Updates a screen with a new number value
-      secondNumber = screenValue;
+      counter++; // Each number click once operator is present ups the counter to...
+      if(counter === 1) { screenValue = '0'; } // Reset screen value only on first number btn click
+      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate second number and removes first zero of a non-zero number
+      screenElement.textContent = screenValue; // Update a screen with a new number value
+      secondNumber = screenValue; // Assign screen value to 2nd number variable 
     }
   });
 });
 
-decimal.addEventListener('click', function(event) { // Adds event handler to "dot" button
-  let decimalPoint = this.children[0].textContent; // Takes a value of clicked "dot" button
-  if(!screenValue.includes('.')) { screenValue = screenValue + decimalPoint; } // Adds "." to a number only once
-  screenElement.textContent = screenValue;
+decimal.addEventListener('click', function(event) { // Add event handler to "." button
+  let decimalPoint = this.children[0].textContent; // Take a value of clicked "." button
+  if(!screenValue.includes('.')) { screenValue = screenValue + decimalPoint; } // Add "." to a number only once
+  screenElement.textContent = screenValue; // Update a screen with to display "." within a number
 });
 
-operators.forEach((button) => { // Adds event handler to all operator buttons
+operators.forEach((button) => { // Add event handler to all operator buttons
   return button.addEventListener('click', function(event) {
-    buttonOperatorEnd = this.children[0].textContent;
-    if(!secondNumber) { // Allow changing operators until second number is entered  
-    buttonOperator = this.children[0].textContent; // Takes a value of clicked operator button until second number is entered
+    buttonOperatorEnd = this.children[0].textContent; // Take value of clicked operator button - backup
+    if(!secondNumber) { // If second equation number hasn't been entered...
+    buttonOperator = this.children[0].textContent; // Take value of clicked operator button - main
     }
-    if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation doesn't have operator/empty -> update number + operator
-      screenEquationElement.textContent = screenValue + ' ' + buttonOperator + ' '; // This stops from updating to zero on same operator click
+    if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation doesn't have operator...
+      screenEquationElement.textContent = screenValue + ' ' + buttonOperator + ' '; // Update screen with 1st number and operator
     }
-    else if(!secondNumber) { // Must be changed to else if() checking presence of operator in equation and that 2nd num variable is '' / undefined
-      let temp = screenEquationElement.textContent.split(''); // Turned to array to apply splice() and replace current operator with new
-      temp.splice(-2,2,' ',buttonOperator);
-      screenEquationElement.textContent = temp.join('');
+    else if(!secondNumber) { // If second equation number hasn't been entered allow changing current operator
+      let temp = screenEquationElement.textContent.split(''); // Turn to array
+      temp.splice(-2,2,' ',buttonOperator); // Replace operator character
+      screenEquationElement.textContent = temp.join(''); // Join back to string and update to a screen
     }
-    else {
-      screenEquationElement.textContent = `${operate(firstNumber,secondNumber,buttonOperator)} ${buttonOperatorEnd}`;
-      screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
-      screenValue = ''; // Prevent 3rd number concatenation to the 2nd
-      firstNumber = screenElement.textContent; // Updates first number to equation result
-      secondNumber = undefined;
-      if(firstNumber === screenElement.textContent) { // change operator for subsequent number calculations
-        buttonOperator = screenEquationElement.textContent.split('').splice(-1,1).join('');
+    else { // If both numbers and operator are present, calculate result on operator button click
+      screenEquationElement.textContent = `${operate(firstNumber,secondNumber,buttonOperator)} ${buttonOperatorEnd}`; // Update equation with result
+      screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator); // Update  1st number with equation result
+      screenValue = ''; // Prevent concatenation of 3rd number to 2nd one
+      firstNumber = screenElement.textContent; // Assign calculated result to 1st number variable
+      secondNumber = undefined; // Empty 2nd number value to allow chaining calculations
+      if(firstNumber === screenElement.textContent) { // Allow changing operator for subsequent calculations
+        buttonOperator = screenEquationElement.textContent.split('').splice(-1,1).join(''); // Turn to array, replace and join back to string
       }
     } 
   });
 });
 
-equal.addEventListener('click', function(event) {
-  if(secondNumber) {
-  screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
-  screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`;
+equal.addEventListener('click', function(event) { // Add event handler to "=" equals button
+  if(secondNumber) { // If second equation number is present equals button click will...
+  screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator); // Update  1st number with equation result
+  screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`; // Update equation with result and "="
   }
 });
 
-function operate(num1,num2,operator) {
+function findOperator(operator) { // Used in .some() method to find presence of operator within equation
+  return operator === '%' || operator === '÷' || operator === '×' || operator === '-' || operator === '+';
+}
+
+function operate(num1,num2,operator) { // Call function based on operator value
   switch (operator) {
     case '+':
       return add(num1,num2);
@@ -90,7 +93,7 @@ function operate(num1,num2,operator) {
 }
 
 function add(num1,num2) {
-  return Number(num1) + Number(num2);
+  return Number(num1) + Number(num2); // Turn to number to prevent string concatenation
 }
 
 function subtract(num1,num2) {
@@ -109,6 +112,3 @@ function percentage(num1,num2) {
   return num1 / 100 * num2;
 }
 
-function findOperator(operator) {
-  return operator === '%' || operator === '÷' || operator === '×' || operator === '-' || operator === '+' || operator === '='; // = needed here?
-}
