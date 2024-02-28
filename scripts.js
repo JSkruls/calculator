@@ -1,4 +1,4 @@
-let screenValue = document.querySelector('.result').textContent; // Holds initial display value - 0
+let screenValue = document.querySelector('.result').textContent; // Holds initial display value - 0 should I replace this w/ screenElement.textContent?
 let screenElement = document.querySelector('.result'); // Html element for initial display value
 let screenEquationElement = document.querySelector('.equation'); // Html element for display equation 
 
@@ -7,6 +7,8 @@ const operators = Array.from(document.querySelectorAll('.operator'));
 const decimal = document.querySelector('.dot');
 const plus = document.querySelector('.plus');
 const equal = document.querySelector('.equals');
+const allClear = document.querySelector('.all-clear');
+
 
 let counter = 0;
 let firstNumber;
@@ -72,6 +74,14 @@ equal.addEventListener('click', function(event) { // Add event handler to "=" eq
   screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`; // Update equation with result and "="
   }
 });
+
+allClear.addEventListener('click',function(event) { // // Add event handler to "AC" button
+  screenEquationElement.textContent = ''; // Empty equation and result elements
+  screenElement.textContent = '0';
+  screenValue = '0';
+  firstNumber = 0; // Reset 1st number value
+});
+
 
 function findOperator(operator) { // Used in .some() method to find presence of operator within equation
   return operator === '%' || operator === '÷' || operator === '×' || operator === '-' || operator === '+';
