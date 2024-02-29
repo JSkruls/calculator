@@ -8,6 +8,7 @@ const decimal = document.querySelector('.dot');
 const plus = document.querySelector('.plus');
 const equal = document.querySelector('.equals');
 const allClear = document.querySelector('.all-clear');
+const clearEntry = document.querySelector('.clear-entry');
 
 
 let counter = 0;
@@ -75,13 +76,30 @@ equal.addEventListener('click', function(event) { // Add event handler to "=" eq
   }
 });
 
-allClear.addEventListener('click',function(event) { // // Add event handler to "AC" button
+allClear.addEventListener('click', function(event) { // // Add event handler to "AC" button
   screenEquationElement.textContent = ''; // Empty equation and result elements
   screenElement.textContent = '0';
   screenValue = '0';
   firstNumber = 0; // Reset 1st number value
 });
 
+clearEntry.addEventListener('click', function(event) {
+  let temp = screenEquationElement.textContent.split('');
+  if(secondNumber && (temp[temp.length-1] !== '='))  { // If 2nd number is present and equation end with '=' clear 2nd number
+    let temp = screenElement.textContent.split('');
+    temp.pop();
+    screenElement.textContent = temp.join('');
+    secondNumber = screenElement.textContent;
+    screenValue = screenElement.textContent; // delete later?
+  } 
+  else { // Otherwise clear 1st number
+    let temp = screenElement.textContent.split('');
+    temp.pop();
+    screenElement.textContent = temp.join('');
+    firstNumber = screenElement.textContent;
+    screenValue = screenElement.textContent; // delete later?
+  }
+});
 
 function findOperator(operator) { // Used in .some() method to find presence of operator within equation
   return operator === '%' || operator === '÷' || operator === '×' || operator === '-' || operator === '+';
