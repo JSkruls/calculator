@@ -20,7 +20,7 @@ let buttonOperatorEnd;
 numbers.forEach((button) => {
   return button.addEventListener('click',function(event) { // Add event handlers to all numeric buttons
     let buttonNumber = this.children[0].textContent; // Take a value of clicked numeric button
-
+    
     if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation hasn't got operator...
       screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate first number and removes first zero of a non-zero number
       screenElement.textContent = screenValue; // Update a screen with a new number value
@@ -98,6 +98,59 @@ clearEntry.addEventListener('click', function(event) {
     screenElement.textContent = temp.join('');
     firstNumber = screenElement.textContent;
     screenValue = screenElement.textContent; // delete later?
+  }
+});
+
+window.addEventListener('keypress', function(event) { // Put this inside numbers event handler, probably
+  let buttonNumber;
+  if(event.code.charAt(event.code.length - 1).charCodeAt(0) >= 48 && event.code.charAt(event.code.length - 1).charCodeAt(0) <= 57) {
+    //If key pressed is between 0 an 9 according to ascii...
+    //Prevents displaying other key events
+    switch(event.code.charAt(event.code.length - 1)) {
+      case '1': buttonNumber = '1';
+                console.log(`${buttonNumber}`);
+                break;
+      case '2': buttonNumber = '2';
+                console.log(`${buttonNumber}`);
+                break;
+      case '3': buttonNumber = '3';
+                console.log(`${buttonNumber}`);
+                break;
+      case '4': buttonNumber = '4';
+                console.log(`${buttonNumber}`);
+                break;
+      case '5': buttonNumber = '5';
+                console.log(`${buttonNumber}`);
+                break;
+      case '6': buttonNumber = '6';
+                console.log(`${buttonNumber}`);
+                break;
+      case '7': buttonNumber = '7';
+                console.log(`${buttonNumber}`);
+                break;
+      case '8': buttonNumber = '8';
+                console.log(`${buttonNumber}`);
+                break;
+      case '9': buttonNumber = '9';
+                console.log(`${buttonNumber}`);
+                break;
+      case '0': buttonNumber = '0';
+                console.log(`${buttonNumber}`);
+                break;
+    }
+  
+    if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation hasn't got operator...
+      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate first number and removes first zero of a non-zero number
+      screenElement.textContent = screenValue; // Update a screen with a new number value
+      firstNumber = screenValue; // Assign screen value to variable 
+    }
+    else { // If equation contains operator...
+      counter++; // Each number click once operator is present ups the counter to...
+      if(counter === 1) { screenValue = '0'; } // Reset screen value only on first number btn click
+      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate second number and removes first zero of a non-zero number
+      screenElement.textContent = screenValue; // Update a screen with a new number value
+      secondNumber = screenValue; // Assign screen value to 2nd number variable 
+    }
   }
 });
 
