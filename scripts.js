@@ -127,7 +127,6 @@ window.addEventListener('keypress', function(event) {
       case '0': buttonNumber = '0';
                 break;
     }
-  
     if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation hasn't got operator...
       screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate first number and removes first zero of a non-zero number
       screenElement.textContent = screenValue; // Update a screen with a new number value
@@ -141,6 +140,14 @@ window.addEventListener('keypress', function(event) {
       secondNumber = screenValue; // Assign screen value to 2nd number variable 
     }
   }
+});
+
+window.addEventListener('keypress', function(event) {
+  let decimalPoint = '.';
+  if(event.code === 'Period') { // Display '.' only if it appropriate key was pressed
+    if(!screenValue.includes('.')) { screenValue = screenValue + decimalPoint; } // Add "." to a number only once
+    screenElement.textContent = screenValue; // Update a screen with to display "." within a number
+    }
 });
 
 function findOperator(operator) { // Used in .some() method to find presence of operator within equation
