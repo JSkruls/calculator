@@ -101,41 +101,30 @@ clearEntry.addEventListener('click', function(event) {
   }
 });
 
-window.addEventListener('keypress', function(event) { // Put this inside numbers event handler, probably
+window.addEventListener('keypress', function(event) {
   let buttonNumber;
-  if(event.code.charAt(event.code.length - 1).charCodeAt(0) >= 48 && event.code.charAt(event.code.length - 1).charCodeAt(0) <= 57) {
-    //If key pressed is between 0 an 9 according to ascii...
-    //Prevents displaying other key events
+  if(event.code.charAt(event.code.length - 1).charCodeAt(0) >= 48 && // Display only keys between 0 an 9 according to ascii...
+     event.code.charAt(event.code.length - 1).charCodeAt(0) <= 57) {
     switch(event.code.charAt(event.code.length - 1)) {
       case '1': buttonNumber = '1';
-                console.log(`${buttonNumber}`);
                 break;
       case '2': buttonNumber = '2';
-                console.log(`${buttonNumber}`);
                 break;
       case '3': buttonNumber = '3';
-                console.log(`${buttonNumber}`);
                 break;
       case '4': buttonNumber = '4';
-                console.log(`${buttonNumber}`);
                 break;
       case '5': buttonNumber = '5';
-                console.log(`${buttonNumber}`);
                 break;
       case '6': buttonNumber = '6';
-                console.log(`${buttonNumber}`);
                 break;
       case '7': buttonNumber = '7';
-                console.log(`${buttonNumber}`);
                 break;
       case '8': buttonNumber = '8';
-                console.log(`${buttonNumber}`);
                 break;
       case '9': buttonNumber = '9';
-                console.log(`${buttonNumber}`);
                 break;
       case '0': buttonNumber = '0';
-                console.log(`${buttonNumber}`);
                 break;
     }
   
