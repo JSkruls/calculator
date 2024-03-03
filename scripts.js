@@ -59,6 +59,10 @@ operators.forEach((button) => { // Add event handler to all operator buttons
     else { // If both numbers and operator are present, calculate result on operator button click
       screenEquationElement.textContent = `${operate(firstNumber,secondNumber,buttonOperator)} ${buttonOperatorEnd}`; // Update equation with result
       screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator); // Update  1st number with equation result
+      if(screenElement.textContent.length >= 18) { // If result is max length...
+         screenElement.textContent = Math.round(screenElement.textContent * 100) / 100; // Fix the floating-point rounding error in result field
+         screenEquationElement.textContent = `${Math.round(screenElement.textContent * 100) / 100} ${buttonOperatorEnd}`; // Fix the floating-point rounding error in equation field
+      }
       screenValue = ''; // Prevent concatenation of 3rd number to 2nd one
       firstNumber = screenElement.textContent; // Assign calculated result to 1st number variable
       secondNumber = undefined; // Empty 2nd number value to allow chaining calculations
@@ -71,8 +75,12 @@ operators.forEach((button) => { // Add event handler to all operator buttons
 
 equal.addEventListener('click', function(event) { // Add event handler to "=" equals button
   if(secondNumber) { // If second equation number is present equals button click will...
-  screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator); // Update  1st number with equation result
-  screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`; // Update equation with result and "="
+    screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator); // Update  1st number with equation result
+
+    if(screenElement.textContent.length >= 18) { // If result is max length...
+      screenElement.textContent = Math.round(screenElement.textContent * 100) / 100; // Fix the floating-point rounding error
+    }
+    screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`; // Update equation with result and "="
   }
 });
 
@@ -186,6 +194,7 @@ function divide(num1,num2) {
 }
 
 function percentage(num1,num2) {
-  return num1 / 100 * num2;
+  let result = num1 / 100 * num2;
+  return result;
 }
 
