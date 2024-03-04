@@ -49,6 +49,9 @@ operators.forEach((button) => { // Add event handler to all operator buttons
     buttonOperator = this.children[0].textContent; // Take value of clicked operator button - main
     }
     if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation doesn't have operator...
+      if(screenValue.charAt(screenValue.length - 1) === '.') { // If 1st number ends with . -> 55. in equation it will display as 55 
+        screenValue = screenValue.replace('.','');
+      }
       screenEquationElement.textContent = screenValue + ' ' + buttonOperator + ' '; // Update screen with 1st number and operator
     }
     else if(!secondNumber) { // If second equation number hasn't been entered allow changing current operator
@@ -92,7 +95,7 @@ window.addEventListener('keypress', function(event) {
       if(screenElement.textContent.length >= 18) { // If result is max length...
         screenElement.textContent = Math.round(screenElement.textContent * 100) / 100; // Fix the floating-point rounding error
       }
-      
+
       screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`; // Update equation with result and "="
     }
   }
@@ -107,7 +110,7 @@ allClear.addEventListener('click', function(event) { // // Add event handler to 
 
 clearEntry.addEventListener('click', function(event) {
   let temp = screenEquationElement.textContent.split('');
-  if(secondNumber && (temp[temp.length-1] !== '='))  { // If 2nd number is present and equation end with '=' clear 2nd number
+  if(secondNumber && (temp[temp.length-1] !== '='))  { // If 2nd number is present and equation ends with '=' clear 2nd number
     let temp = screenElement.textContent.split('');
     temp.pop();
     screenElement.textContent = temp.join('');
@@ -173,8 +176,8 @@ window.addEventListener('keypress', function(event) {
     }
 });
 
-window.addEventListener('keypress', function(event) { //
-  if(event.shiftKey && event.code || event.code === 'Slash' || event.code === 'Minus') { // 
+window.addEventListener('keypress', function(event) { 
+  if(event.shiftKey && event.code || event.code === 'Slash' || event.code === 'Minus') { // If shift + number or '/', or '-' are pressed...
     switch(event.code) {
       case 'Digit5': 
         buttonOperatorEnd = '%';
@@ -190,6 +193,9 @@ window.addEventListener('keypress', function(event) { //
         break;
       case 'Minus':  
         buttonOperatorEnd = '-';
+        break;
+      default: 
+        buttonOperatorEnd = '';
         break;
     }
     if(!secondNumber) { buttonOperator = buttonOperatorEnd; }
@@ -218,7 +224,34 @@ window.addEventListener('keypress', function(event) { //
   }
 });
 
-//ENTER BUTTON 
+window.addEventListener('keydown', function(event) {
+  if(event.code === 'Backspace') {
+    let temp = screenEquationElement.textContent.split('');
+    if(secondNumber && (temp[temp.length-1] !== '='))  { // If 2nd number is present and equation ends with '=' clear 2nd number
+      let temp = screenElement.textContent.split('');
+      temp.pop();
+      screenElement.textContent = temp.join('');
+      secondNumber = screenElement.textContent;
+      screenValue = screenElement.textContent; // delete later?
+    } 
+    else { // Otherwise clear 1st number
+      let temp = screenElement.textContent.split('');
+      temp.pop();
+      screenElement.textContent = temp.join('');
+      firstNumber = screenElement.textContent;
+      screenValue = screenElement.textContent; // delete later?
+    }
+  }
+});
+
+window.addEventListener('keydown', function(event) {
+  if(event.metaKey && event.code === 'Backspace') {
+    screenEquationElement.textContent = ''; // Empty equation and result elements
+    screenElement.textContent = '0';
+    screenValue = '0';
+    firstNumber = 0; // Reset 1st number value
+  }
+});
 
 function findOperator(operator) { // Used in .some() method to find presence of operator within equation
   return operator === '%' || operator === '÷' || operator === '×' || operator === '-' || operator === '+';
