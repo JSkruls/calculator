@@ -26,7 +26,7 @@ numbers.forEach((button) => {
       screenElement.textContent = screenValue; // Update a screen with a new number value
       firstNumber = screenValue; // Assign screen value to variable 
     }
-    else { // If equation contains operator...
+    else { // If equation contains operator... 
       counter++; // Each number click once operator is present ups the counter to...
       if(counter === 1) { screenValue = '0'; } // Reset screen value only on first number btn click
       screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate second number and removes first zero of a non-zero number
@@ -44,6 +44,7 @@ decimal.addEventListener('click', function(event) { // Add event handler to "." 
 
 operators.forEach((button) => { // Add event handler to all operator buttons
   return button.addEventListener('click', function(event) {
+    if(!firstNumber) {firstNumber = '0'} // If 1st number is not entered and takes as initial 0 -> assign it a value of 0
     buttonOperatorEnd = this.children[0].textContent; // Take value of clicked operator button - backup
     if(!secondNumber) { // If second equation number hasn't been entered...
     buttonOperator = this.children[0].textContent; // Take value of clicked operator button - main
