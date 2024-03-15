@@ -1,264 +1,124 @@
-let screenValue = document.querySelector('.result').textContent; // Holds initial display value - 0 should I replace this w/ screenElement.textContent?
-let screenElement = document.querySelector('.result'); // Html element for initial display value
-let screenEquationElement = document.querySelector('.equation'); // Html element for display equation 
+let firstNumber = ''; // holds first number value
+let secondNumber = ''; // holds second number value
+let operator = null; // holds operator value
+let resetToggle = false; // primes first number emptying
 
-const numbers = Array.from(document.querySelectorAll('.number'));
-const operators = Array.from(document.querySelectorAll('.operator'));
-const decimal = document.querySelector('.dot');
-const plus = document.querySelector('.plus');
-const equal = document.querySelector('.equals');
-const allClear = document.querySelector('.all-clear');
-const clearEntry = document.querySelector('.clear-entry');
+const screenNumber = document.querySelector('.result'); // html element for screen number value
+const screenEquation = document.querySelector('.equation'); // html element for screen equation value
+const numberButtons = document.querySelectorAll('.number');
+const operatorButtons = document.querySelectorAll('.operator');
+const equalButton = document.querySelector('.equals');
+const clearEntryButton = document.querySelector('.clear-entry'); // CE
+const allClearButton = document.querySelector('.all-clear'); // AC
+const decimalButton = document.querySelector('.dot');
+const negativeButton = document.querySelector('.negative'); // add later!
 
+window.addEventListener('keydown', manageKeyInput);
+equalButton.addEventListener('click', calculate);
+clearEntryButton.addEventListener('click', clearEntry);
+allClearButton.addEventListener('click', clearAll);
+decimalButton.addEventListener('click', addDecimal);
+negativeButton.addEventListener('click', addMinus);
 
-let counter = 0;
-let firstNumber;
-let secondNumber;
-let buttonOperator;
-let buttonOperatorEnd;
+numberButtons.forEach((button) => // attach click handler with its function to all number buttons
+  button.addEventListener('click', () => concatNumber(button.textContent)) 
+);
+operatorButtons.forEach((button) => // attach click handler with its function to all operator buttons
+  button.addEventListener('click', () => setOperation(button.textContent))
+); 
 
-numbers.forEach((button) => {
-  return button.addEventListener('click',function(event) { // Add event handlers to all numeric buttons
-    let buttonNumber = this.children[0].textContent; // Take a value of clicked numeric button
-    
-    if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation hasn't got operator...
-      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate first number and removes first zero of a non-zero number
-      screenElement.textContent = screenValue; // Update a screen with a new number value
-      firstNumber = screenValue; // Assign screen value to variable 
-    }
-    else { // If equation contains operator... 
-      counter++; // Each number click once operator is present ups the counter to...
-      if(counter === 1) { screenValue = '0'; } // Reset screen value only on first number btn click
-      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate second number and removes first zero of a non-zero number
-      screenElement.textContent = screenValue; // Update a screen with a new number value
-      secondNumber = screenValue; // Assign screen value to 2nd number variable 
-    }
-  });
-});
-
-decimal.addEventListener('click', function(event) { // Add event handler to "." button
-  let decimalPoint = this.children[0].textContent; // Take a value of clicked "." button
-  if(!screenValue.includes('.')) { screenValue = screenValue + decimalPoint; } // Add "." to a number only once
-  screenElement.textContent = screenValue; // Update a screen with to display "." within a number
-});
-
-operators.forEach((button) => { // Add event handler to all operator buttons
-  return button.addEventListener('click', function(event) {
-    if(!firstNumber) {firstNumber = '0'} // If 1st number is not entered and takes as initial 0 -> assign it a value of 0
-    buttonOperatorEnd = this.children[0].textContent; // Take value of clicked operator button - backup
-    if(!secondNumber) { // If second equation number hasn't been entered...
-    buttonOperator = this.children[0].textContent; // Take value of clicked operator button - main
-    }
-    if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation doesn't have operator...
-      if(screenValue.charAt(screenValue.length - 1) === '.') { // If 1st number ends with . -> 55. in equation it will display as 55 
-        screenValue = screenValue.replace('.','');
-      }
-      screenEquationElement.textContent = screenValue + ' ' + buttonOperator + ' '; // Update screen with 1st number and operator
-    }
-    else if(!secondNumber) { // If second equation number hasn't been entered allow changing current operator
-      let temp = screenEquationElement.textContent.split(''); // Turn to array
-      temp.splice(-2,2,' ',buttonOperator); // Replace operator character
-      screenEquationElement.textContent = temp.join(''); // Join back to string and update to a screen
-    }
-    else { // If both numbers and operator are present, calculate result on operator button click
-      screenEquationElement.textContent = `${operate(firstNumber,secondNumber,buttonOperator)} ${buttonOperatorEnd}`; // Update equation with result on new operator click
-      screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator); // Update  1st number with equation result
-      if(screenElement.textContent.length >= 18) { // If result is max length...
-         screenElement.textContent = Math.round(screenElement.textContent * 100) / 100; // Fix the floating-point rounding error in result field
-         screenEquationElement.textContent = `${Math.round(screenElement.textContent * 100) / 100} ${buttonOperatorEnd}`; // Fix the floating-point rounding error in equation field
-      }
-      screenValue = ''; // Prevent concatenation of 3rd number to 2nd one
-      firstNumber = screenElement.textContent; // Assign calculated result to 1st number variable
-      secondNumber = undefined; // Empty 2nd number value to allow chaining calculations
-      if(firstNumber === screenElement.textContent) { // Allow changing operator for subsequent calculations
-        buttonOperator = screenEquationElement.textContent.split('').splice(-1,1).join(''); // Turn to array, replace and join back to string
-      }
-    } 
-  });
-});
-
-equal.addEventListener('click', function(event) { // Add event handler to "=" equals button
-  if(secondNumber) { // If second equation number is present equals button click will...
-    screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator); // Update  1st number with equation result
-
-    if(screenElement.textContent.length >= 18) { // If result is max length...
-      screenElement.textContent = Math.round(screenElement.textContent * 100) / 100; // Fix the floating-point rounding error
-    }
-    screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`; // Update equation with result and "="
+function concatNumber(number) {
+  if(screenNumber.textContent === '0' || resetToggle) { resetNumber() } // empty screen value to: remove 0 before entering 1st num or remove 1st num before entering 2nd num
+  if(!screenEquation.textContent.includes('=')) { // concatenate clicked/pressed number to emptied screen value if screenNumber isn't equation result
+  screenNumber.textContent += number; 
   }
-});
+} 
 
-window.addEventListener('keypress', function(event) {
-  if(secondNumber) {
-    if(event.code === 'Enter') {
-      screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator);
-
-      if(screenElement.textContent.length >= 18) { // If result is max length...
-        screenElement.textContent = Math.round(screenElement.textContent * 100) / 100; // Fix the floating-point rounding error
-      }
-
-      screenEquationElement.textContent = `${firstNumber} ${buttonOperator} ${secondNumber} =`; // Update equation with result and "="
-    }
-  }
-});
-
-allClear.addEventListener('click', function(event) { // // Add event handler to "AC" button
-  screenEquationElement.textContent = ''; // Empty equation and result elements
-  screenElement.textContent = '0';
-  screenValue = '0';
-  firstNumber = 0; // Reset 1st number value
-});
-
-clearEntry.addEventListener('click', function(event) {
-  let temp = screenEquationElement.textContent.split('');
-  if(secondNumber && (temp[temp.length-1] !== '='))  { // If 2nd number is present and equation ends with '=' clear 2nd number
-    let temp = screenElement.textContent.split('');
-    temp.pop();
-    screenElement.textContent = temp.join('');
-    secondNumber = screenElement.textContent;
-    screenValue = screenElement.textContent; // delete later?
-  } 
-  else { // Otherwise clear 1st number
-    let temp = screenElement.textContent.split('');
-    temp.pop();
-    screenElement.textContent = temp.join('');
-    firstNumber = screenElement.textContent;
-    screenValue = screenElement.textContent; // delete later?
-  }
-});
-
-window.addEventListener('keypress', function(event) {
-  let buttonNumber;
-  if(event.code.charAt(event.code.length - 1).charCodeAt(0) >= 48 && // Display only keys between 0 an 9 according to ascii...
-     event.code.charAt(event.code.length - 1).charCodeAt(0) <= 57 && !event.shiftKey) {
-    switch(event.code.charAt(event.code.length - 1)) {
-      case '1': buttonNumber = '1';
-                break;
-      case '2': buttonNumber = '2';
-                break;
-      case '3': buttonNumber = '3';
-                break;
-      case '4': buttonNumber = '4';
-                break;
-      case '5': buttonNumber = '5';
-                break;
-      case '6': buttonNumber = '6';
-                break;
-      case '7': buttonNumber = '7';
-                break;
-      case '8': buttonNumber = '8';
-                break;
-      case '9': buttonNumber = '9';
-                break;
-      case '0': buttonNumber = '0';
-                break;
-    }
-    if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation hasn't got operator...
-      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate first number and removes first zero of a non-zero number
-      screenElement.textContent = screenValue; // Update a screen with a new number value
-      firstNumber = screenValue; // Assign screen value to variable 
-    }
-    else { // If equation contains operator...
-      // console.log(`has operator`);
-      counter++; // Each number click once operator is present ups the counter to...
-      if(counter === 1) { screenValue = '0'; } // Reset screen value only on first number btn click
-      screenValue != '0' ? screenValue = screenValue + buttonNumber : screenValue = (screenValue + buttonNumber).slice(1); // Concatenate second number and removes first zero of a non-zero number
-      screenElement.textContent = screenValue; // Update a screen with a new number value
-      secondNumber = screenValue; // Assign screen value to 2nd number variable 
-    }
-  }
-});
-
-window.addEventListener('keypress', function(event) { 
-  let decimalPoint = '.';
-  if(event.code === 'Period') { // Display '.' only if it appropriate key was pressed
-    if(!screenValue.includes('.')) { screenValue = screenValue + decimalPoint; } // Add "." to a number only once
-    screenElement.textContent = screenValue; // Update a screen with to display "." within a number
-    }
-});
-
-window.addEventListener('keypress', function(event) { 
-  if(event.shiftKey && event.code || event.code === 'Slash' || event.code === 'Minus') { // If shift + number or '/', or '-' are pressed...
-    switch(event.code) {
-      case 'Digit5': 
-        buttonOperatorEnd = '%';
-        break;
-      case 'Digit8': 
-        buttonOperatorEnd = '×';
-        break;
-      case 'Equal':  
-        buttonOperatorEnd = '+';
-        break;
-      case 'Slash':  
-        buttonOperatorEnd = '÷';
-        break;
-      case 'Minus':  
-        buttonOperatorEnd = '-';
-        break;
-      default: 
-        buttonOperatorEnd = '';
-        break;
-    }
-    if(!secondNumber) { buttonOperator = buttonOperatorEnd; }
-    if(!screenEquationElement.textContent.split('').some(findOperator)) { // If equation doesn't have operator...
-      screenEquationElement.textContent = screenValue + ' ' + buttonOperator + ' '; // Update screen with 1st number and operator
-    }
-    else if(!secondNumber) { // If second equation number hasn't been entered allow changing current operator
-      let temp = screenEquationElement.textContent.split(''); // Turn to array
-      temp.splice(-2,2,' ',buttonOperator); // Replace operator character
-      screenEquationElement.textContent = temp.join(''); // Join back to string and update to a screen
-    }
-    else { // If both numbers and operator are present, calculate result on operator button click
-      screenEquationElement.textContent = `${operate(firstNumber,secondNumber,buttonOperator)} ${buttonOperatorEnd}`; // Update equation with result on new operator click
-      screenElement.textContent = operate(firstNumber,secondNumber,buttonOperator); // Update  1st number with equation result
-      if(screenElement.textContent.length >= 18) { // If result is max length...
-         screenElement.textContent = Math.round(screenElement.textContent * 100) / 100; // Fix the floating-point rounding error in result field
-         screenEquationElement.textContent = `${Math.round(screenElement.textContent * 100) / 100} ${buttonOperatorEnd}`; // Fix the floating-point rounding error in equation field
-      }
-      screenValue = ''; // Prevent concatenation of 3rd number to 2nd one
-      firstNumber = screenElement.textContent; // Assign calculated result to 1st number variable
-      secondNumber = undefined; // Empty 2nd number value to allow chaining calculations
-      if(firstNumber === screenElement.textContent) { // Allow changing operator for subsequent calculations
-        buttonOperator = screenEquationElement.textContent.split('').splice(-1,1).join(''); // Turn to array, replace and join back to string
-      }
-    }    
-  }
-});
-
-window.addEventListener('keydown', function(event) {
-  if(event.code === 'Backspace') {
-    let temp = screenEquationElement.textContent.split('');
-    if(secondNumber && (temp[temp.length-1] !== '='))  { // If 2nd number is present and equation ends with '=' clear 2nd number
-      let temp = screenElement.textContent.split('');
-      temp.pop();
-      screenElement.textContent = temp.join('');
-      secondNumber = screenElement.textContent;
-      screenValue = screenElement.textContent; // delete later?
-    } 
-    else { // Otherwise clear 1st number
-      let temp = screenElement.textContent.split('');
-      temp.pop();
-      screenElement.textContent = temp.join('');
-      firstNumber = screenElement.textContent;
-      screenValue = screenElement.textContent; // delete later?
-    }
-  }
-});
-
-window.addEventListener('keydown', function(event) {
-  if(event.metaKey && event.code === 'Backspace') {
-    screenEquationElement.textContent = ''; // Empty equation and result elements
-    screenElement.textContent = '0';
-    screenValue = '0';
-    firstNumber = 0; // Reset 1st number value
-  }
-});
-
-function findOperator(operator) { // Used in .some() method to find presence of operator within equation
-  return operator === '%' || operator === '÷' || operator === '×' || operator === '-' || operator === '+';
+function resetNumber() {
+  screenNumber.textContent = ''; // empty screen value to: remove 0 before entering 1st num or remove 1st num before entering 2nd num
+  resetToggle = false; // reset toggle to allow entering new number on subsequent operator click
 }
 
-function operate(num1,num2,operator) { // Call function based on operator value
+function addDecimal() {
+  if(resetToggle) { resetNumber() } // empty screen number so that '.' is added to 2nd number instead of 1st
+  if(screenEquation.textContent.includes('=')) { // prevent adding '.' to result of equation, instead add '.' to following number
+    resetNumber();
+    screenEquation.textContent = '';
+  }
+  if(screenNumber.textContent === '') { screenNumber.textContent = '0' } // make screen value 0 if adding '.'
+  if(screenNumber.textContent.includes('.')) { return } // do nothing if '.' is already present
+  screenNumber.textContent += '.'; // concatenate '.' to screen value of '0'
+} 
+
+function clearEntry() {
+  if(!resetToggle && !screenEquation.textContent.includes('=')) { 
+    screenNumber.textContent = screenNumber.textContent.slice(0,-1); // delete last char of screenNumber if: 1st num is set via setOperation() and screenNumber isn't equation result
+   } 
+}
+
+function clearAll() { // reset all values to initial state
+  screenEquation.textContent = '';
+  screenNumber.textContent = '0';
+  firstNumber = '';
+  secondNumber = '';
+  operator = null;
+}
+
+function transformOperator(keyboardInput) { // convert operator key/click inputs to display differently on screen
+  if(keyboardInput === '*') { return '×' }  // '*' displays as '×'
+  if(keyboardInput === '/') { return '÷' }  // '/' displays as '÷'
+  if(keyboardInput === '+') { return '+' }
+  if(keyboardInput === '-') { return '-' }
+  if(keyboardInput === '%') { return '%' }
+}
+
+function setOperation(changedOperator) { 
+  if(operator !== null) { calculate() } // calculate equation on subsequent operator click
+  operator = changedOperator; // assign converted operator value to operator variable
+  if(screenNumber.textContent.charAt(screenNumber.textContent.length - 1) === '.') { // if 1st num ends on '.', display it in equation without the '.'
+    screenNumber.textContent = screenNumber.textContent.slice(0,-1)
+  }
+  firstNumber = screenNumber.textContent; // first number takes screen value or equation result value for subsequent operation
+  screenEquation.textContent = `${firstNumber} ${operator}`; // update equation screen with first num and operator
+  resetToggle = true; // prime screen value to be reset on entry of 2nd number
+}
+
+function calculate() {
+  if(operator === null || resetToggle) { return } // calculate equation on subsequent operator click or on 'Enter / =' if 2nd number is present
+  if(screenNumber.textContent.charAt(screenNumber.textContent.length - 1) === '.') { // if 2nd num ends on '.', display it in equation without the '.'
+    screenNumber.textContent = screenNumber.textContent.slice(0,-1)
+  }
+  secondNumber = screenNumber.textContent; // assign screen value to 2nd num var once 1st num and operator are set via setOperation()
+  screenNumber.textContent = floatingPointFix(operate(firstNumber,secondNumber,operator)); // update screen value with equation result
+  secondNumber.includes('-') ? 
+    screenEquation.textContent = `${firstNumber} ${operator} (${secondNumber}) =` : // display equation w/ brackets around 2nd number if it's negative
+    screenEquation.textContent = `${firstNumber} ${operator} ${secondNumber} =`; // display equation as is
+  operator = null;
+}
+
+function manageKeyInput(event) { // manage key input (not clicks)
+  if(event.key >= 0 && event.key <= 9) { concatNumber(event.key) } // concatenate to current number if key is 0 to 9 
+  if(event.key === '.') { addDecimal() } // concatenate '.' it to current number if key is '.'
+  if(event.key === 'Enter') { calculate() } // calculate equation if key is 'Enter'
+  if(event.key === 'Backspace') { clearEntry() } // delete last char of current number if key is 'Backspace'
+  if(event.key === 'Escape') { clearAll() } // reset current number and equation if key is 'Escape'
+  if(event.key === '%' || event.key === '*' || event.key === '/' || event.key === '+' || event.key === '-') { 
+    setOperation(transformOperator(event.key)); // change key operator value to display version and pass it to setOperation()
+  }
+}
+
+function floatingPointFix(number) { 
+  return Math.round(number * 1000) / 1000; // fix floating point rounding error with 3 decimal point precision
+}
+
+function addMinus() {
+  if(screenNumber.textContent.includes('-')) { return } // add '-' only once per number
+  if(screenNumber.textContent !== '0' && !resetToggle && !screenEquation.textContent.includes('=')) { // don't add '-' if screenNumber is  0  
+    screenNumber.textContent = `-${screenNumber.textContent}`; // don't add '-' if 1st num and operator are set; screenNumber shows equation result
+  }
+}
+
+function operate(num1,num2,operator) { // call one of functions based on operator value
   switch (operator) {
     case '+':
       return add(num1,num2);
@@ -269,12 +129,12 @@ function operate(num1,num2,operator) { // Call function based on operator value
     case '÷':
       return divide(num1,num2);
     case '%':
-      return percentage(num1,num2);
+      return percentage(num1,num2); 
   }
 }
 
 function add(num1,num2) {
-  return Number(num1) + Number(num2); // Turn to number to prevent string concatenation
+  return Number(num1) + Number(num2); // turn to number to add instead of concatenation
 }
 
 function subtract(num1,num2) {
